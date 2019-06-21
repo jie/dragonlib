@@ -19,3 +19,4 @@ yunpian_python_sdk
 xlwt
 maxminddb
 qiniu
+https://github.com/jie/dragonlib.git
