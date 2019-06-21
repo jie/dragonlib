@@ -1,6 +1,6 @@
 import tornado
 import tornado.web
-from tornado.wsgi import WSGIAdapter
+# from tornado.wsgi import WSGIAdapter
 from .application import CoreApplication
 
 
@@ -68,11 +68,11 @@ class MicroService(object):
         self.application = CoreApplication(self.routes, **settings)
         return self.application
 
-    def get_wsgi_app(self):
-        from gevent import monkey
-        monkey.patch_all()
-        wsgi_app = WSGIAdapter(self.application)
-        return wsgi_app
+    # def get_wsgi_app(self):
+    #     from gevent import monkey
+    #     monkey.patch_all()
+    #     wsgi_app = WSGIAdapter(self.application)
+    #     return wsgi_app
 
     def start(self):
         self.application.listen(self.port, xheaders=True)
