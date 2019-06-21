@@ -7,7 +7,7 @@ from setuptools import find_packages
 
 setup(
     name = "dragonlib",
-    version = "0.0.5",
+    version = "0.0.6",
     packages = find_packages(),
 
     install_requires = [
