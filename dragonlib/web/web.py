@@ -14,6 +14,15 @@ from datetime import datetime, date
 logger = logging.getLogger(__name__)
 
 
+def authenticated(method):
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        if not self.current_user:
+            self.fail(code=ErrorCode.unauthorized, message='session_required')
+        return method(self, *args, **kwargs)
+    return wrapper
+
+
 class ApiJsonEncoder(JSONEncoder):
 
     def default(self, obj):
@@ -71,10 +80,6 @@ class BaseAPIHandler(RequestHandler, BaseMixin):
         logger.info('status_code: %s, kwargs: %s' % (status_code, kwargs))
         self.set_status(status_code)
         self.output(kwargs)
-
-    @staticmethod
-    def gen_return(result=None):
-        raise gen.Return(result)
 
     # def log_exception(self, typ, value, tb):
     #     super(BaseAPIHandler, self).log_exception(typ, value, tb)
@@ -135,11 +140,11 @@ class APIHandler(BaseAPIHandler):
             self.success(**data if data else {})
 
 
-def authenticated(method):
-    @functools.wraps(method)
-    def wrapper(self, *args, **kwargs):
-        if not self.current_user:
-            raise HTTPError(403, reason="Unauthorized")
-        return method(self, *args, **kwargs)
+class SessionAPI(APIHandler):
 
-    return wrapper
+    @authenticated
+    def post(self, *args, **kwargs):
+        if self._finished:
+            return
+        super(SessionAPI, self).post(*args, **kwargs)
+
