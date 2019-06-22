@@ -3,7 +3,7 @@ import logging
 import tornado
 import addict
 import functools
-import errcode
+from .errcode import ErrorCode
 from json import JSONEncoder
 from tornado import gen
 from tornado.web import RequestHandler
@@ -47,7 +47,7 @@ class BaseAPIHandler(RequestHandler):
 
     def success(self, message='ok', **kwargs):
         self.output({
-            'code': errcode.success,
+            'code': ErrorCode.success,
             'message': message,
             'data': kwargs
         })
@@ -123,7 +123,7 @@ class APIHandler(BaseAPIHandler):
         params = self.parse_params()
         result, message = self.validate_params(params)
         if result is False:
-            self.fail(code=errcode.system_error, message=message)
+            self.fail(code=ErrorCode.system_error, message=message)
             return
         data = self.api(params)
         if not self._finished:

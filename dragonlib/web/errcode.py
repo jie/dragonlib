@@ -1,2 +1,4 @@
-success = '0'
-system_error = '-10000'
+class ErrorCode(object):
+
+    success = '0'
+    system_error = '-10000'
