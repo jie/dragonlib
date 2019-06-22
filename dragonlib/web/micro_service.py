@@ -29,7 +29,7 @@ class MicroService(object):
 
     def init_redis(self):
         import redis
-        from .redis_utils import RedisUtils
+        from ..utils.redis_utils import RedisUtils
 
         pool = redis.ConnectionPool(
             host=self.settings.UMBRELLA_API_REDIS_HOST,
