@@ -7,7 +7,7 @@ from .application import CoreApplication
 class MicroService(object):
 
     def __init__(self, name, routes, port,
-                 settings, autoreload=False, debug=False, cookie_secret=None):
+                 settings, autoreload=False, debug=False, cookie_secret=None, prefix="DRAGON_"):
 
         self.routes = routes
         self.port = port
@@ -15,6 +15,7 @@ class MicroService(object):
         self.debug = debug
         self.settings = settings
         self.cookie_secret = cookie_secret
+        self.prefix = prefix
         self.init_services()
 
     def init_services(self):
@@ -32,9 +33,9 @@ class MicroService(object):
         from ..utils.redis_utils import RedisUtils
 
         pool = redis.ConnectionPool(
-            host=self.settings.UMBRELLA_API_REDIS_HOST,
-            port=int(self.settings.UMBRELLA_API_REDIS_PORT),
-            db=self.settings.UMBRELLA_API_REDIS_DB,
+            host=getAttr(self.settings, '%sAPI_REDIS_HOST' % self.prefix,
+            port=int(getAttr(self.settings, '%sAPI_REDIS_PORT' % self.prefix),
+            db=getAttr(self.settings, '%sAPI_REDIS_DB' % self.prefix,
             decode_responses=True
         )
         redis_service = RedisUtils(pool)
