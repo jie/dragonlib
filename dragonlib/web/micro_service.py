@@ -35,7 +35,7 @@ class MicroService(object):
         pool = redis.ConnectionPool(
             host=getAttr(self.settings, '%sAPI_REDIS_HOST' % self.prefix,
             port=int(getAttr(self.settings, '%sAPI_REDIS_PORT' % self.prefix),
-            db=getAttr(self.settings, '%sAPI_REDIS_DB' % self.prefix,
+            db=getAttr(self.settings, '%sAPI_REDIS_DB' % self.prefix),
             decode_responses=True
         )
         redis_service = RedisUtils(pool)
