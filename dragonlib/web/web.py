@@ -34,7 +34,8 @@ class APIError(Exception):
     code = '-10000'
 
 
-class BaseAPIHandler(RequestHandler):
+class BaseMixin(object):
+
     def dumpjson(self, response):
         return json.dumps(response, cls=ApiJsonEncoder)
 
@@ -52,6 +53,9 @@ class BaseAPIHandler(RequestHandler):
             'data': kwargs
         })
 
+
+class BaseAPIHandler(RequestHandler, BaseMixin):
+
     def fail(self, code, message, status_code=200, **kwargs):
         logger.info('status_code: %s, message: %s, kwargs: %s' % (status_code, message, kwargs))
         if status_code != 200:
@@ -59,7 +63,8 @@ class BaseAPIHandler(RequestHandler):
             self.set_header('system_error_format', 'json')
         self.output({
             'code': code,
-            'message': message
+            'message': message,
+            'data': kwargs
         })
 
     def info(self, status_code=200, **kwargs):
@@ -71,25 +76,25 @@ class BaseAPIHandler(RequestHandler):
     def gen_return(result=None):
         raise gen.Return(result)
 
-    def log_exception(self, typ, value, tb):
-        super(BaseAPIHandler, self).log_exception(typ, value, tb)
-        if isinstance(value, HTTPError):
-            if value.log_message:
-                format = "%d %s: " + value.log_message
-                args = ([value.status_code, self._request_summary()] +
-                        list(value.args))
-                logger.error(format, *args)
-        else:
-            logger.exception(
-                "Uncaught exception %s\n%r",
-                self._request_summary(),
-                self.request,
-                exc_info=(typ, value, tb))
+    # def log_exception(self, typ, value, tb):
+    #     super(BaseAPIHandler, self).log_exception(typ, value, tb)
+    #     if isinstance(value, HTTPError):
+    #         if value.log_message:
+    #             format = "%d %s: " + value.log_message
+    #             args = ([value.status_code, self._request_summary()] +
+    #                     list(value.args))
+    #             logger.error(format, *args)
+    #     else:
+    #         logger.exception(
+    #             "Uncaught exception %s\n%r",
+    #             self._request_summary(),
+    #             self.request,
+    #             exc_info=(typ, value, tb))
 
-    def parse_error_info(self, err):
-        if err.args and len(err.args) >= 1:
-            return '%s: %s' % (err.message, err.args[0])
-        return err.message
+    # def parse_error_info(self, err):
+    #     if err.args and len(err.args) >= 1:
+    #         return '%s: %s' % (err.message, err.args[0])
+    #     return err.message
 
     def get_current_user(self):
         userid = self.request.headers.get('userid')

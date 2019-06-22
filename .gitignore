@@ -15,3 +15,5 @@ build
 build/*
 dist
 dist/*
+htmlcov
+htmlcov/*
