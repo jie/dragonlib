@@ -31,11 +31,10 @@ class MicroService(object):
     def init_redis(self):
         import redis
         from ..utils.redis_utils import RedisUtils
-
         pool = redis.ConnectionPool(
-            host=getAttr(self.settings, '%sAPI_REDIS_HOST' % self.prefix),
-            port=int(getAttr(self.settings, '%sAPI_REDIS_PORT' % self.prefix),
-            db=getAttr(self.settings, '%sAPI_REDIS_DB' % self.prefix),
+            host=getattr(self.settings, '%sAPI_REDIS_HOST' % self.prefix),
+            port=int(getattr(self.settings, '%sAPI_REDIS_PORT' % self.prefix)),
+            db=getattr(self.settings, '%sAPI_REDIS_DB' % self.prefix),
             decode_responses=True
         )
         redis_service = RedisUtils(pool)
