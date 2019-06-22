@@ -32,9 +32,9 @@ class MicroService(object):
         import redis
         from ..utils.redis_utils import RedisUtils
         pool = redis.ConnectionPool(
-            host=getattr(self.settings, '%sAPI_REDIS_HOST' % self.prefix),
-            port=int(getattr(self.settings, '%sAPI_REDIS_PORT' % self.prefix)),
-            db=getattr(self.settings, '%sAPI_REDIS_DB' % self.prefix),
+            host=getattr(self.settings, '%sREDIS_HOST' % self.prefix),
+            port=int(getattr(self.settings, '%sREDIS_PORT' % self.prefix)),
+            db=getattr(self.settings, '%sREDIS_DB' % self.prefix),
             decode_responses=True
         )
         redis_service = RedisUtils(pool)
