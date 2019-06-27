@@ -18,6 +18,9 @@ class MicroService(object):
         self.prefix = prefix
         self.init_services()
 
+    def getSetting(self, name):
+        return getattr(self.settings, '%s%s' % (self.prefix, name))
+
     def init_services(self):
         self.init_logger()
         self.init_database()
@@ -26,15 +29,22 @@ class MicroService(object):
 
     def init_database(self):
         # init database
-        pass
+        from dragonlib.utils.mongo_utils import MongoConnection
+        mongodb = MongoConnection(
+            host=self.getSetting('MONGODB_HOST'),
+            port=self.getSetting('MONGODB_PORT'),
+            db=self.getSetting('MONGODB_DB')
+        )
+        mongodb.connect()
+
 
     def init_redis(self):
         import redis
         from ..utils.redis_utils import RedisUtils
         pool = redis.ConnectionPool(
-            host=getattr(self.settings, '%sREDIS_HOST' % self.prefix),
-            port=int(getattr(self.settings, '%sREDIS_PORT' % self.prefix)),
-            db=getattr(self.settings, '%sREDIS_DB' % self.prefix),
+            host=self.getSetting('REDIS_HOST'),
+            port=int(self.getSetting('REDIS_PORT')),
+            db=self.getSetting('REDIS_DB'),
             decode_responses=True
         )
         redis_service = RedisUtils(pool)
