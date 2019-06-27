@@ -32,7 +32,7 @@ class MicroService(object):
         from dragonlib.utils.mongo_utils import MongoConnection
         mongodb = MongoConnection(
             host=self.getSetting('MONGODB_HOST'),
-            port=self.getSetting('MONGODB_PORT'),
+            port=int(self.getSetting('MONGODB_PORT')),
             db=self.getSetting('MONGODB_DB')
         )
         mongodb.connect()
