@@ -105,7 +105,7 @@ class BaseDocument(Document):
         data = super().to_mongo().to_dict()
         data.pop('_id')
         data.pop('_cls')
-        data.update(id=str(self.id))
+        data.update(id=self.get_by_id())
 
         if not keys:
             return data
@@ -115,3 +115,6 @@ class BaseDocument(Document):
             if key in data.keys():
                 res[key] = data.get(key)
         return res
+    
+    def get_object_id(self):
+        return str(self.id)
