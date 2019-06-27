@@ -79,10 +79,10 @@ class TestBase(AsyncHTTPTestCase):
         return self._test_response(response, **kwargs)
 
     def _test_record_created(self, model_cls, **kwargs):
-        record = model_cls.get(**kwargs)
+        record = model_cls.get_first(**kwargs)
         self.assertNotEqual(record, None)
         return record
 
     def _create_record(self, model_cls, **kwargs):
-        record = model_cls(**kwargs)
+        record = model_cls.create(**kwargs)
         return record
