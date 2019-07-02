@@ -59,20 +59,32 @@ class BaseMixin(object):
         self.output({
             'code': ErrorCode.success,
             'message': message,
+            'cnmsg': self.LANGUAGE_MAP['zh-CN'].get('message', '未知'),
+            'enmsg': self.LANGUAGE_MAP['en-US'].get('message', 'UNKNOWN'),
             'data': kwargs
         })
 
 
 class BaseAPIHandler(RequestHandler, BaseMixin):
 
+    ERR_PREFIX = None
+    LANGUAGE_MAP = {}
+
     def fail(self, code, message, status_code=200, **kwargs):
         logger.info('status_code: %s, message: %s, kwargs: %s' % (status_code, message, kwargs))
         if status_code != 200:
             self.set_status(status_code)
             self.set_header('system_error_format', 'json')
+        
+        errcode = code
+        if getattr(self, 'ERR_PREFIX', None):
+            errcode = self.ERR_PREFIX + errcode
+
         self.output({
-            'code': code,
+            'code': errcode,
             'message': message,
+            'cnmsg': self.LANGUAGE_MAP['zh-CN'].get('message', '未知错误'),
+            'enmsg': self.LANGUAGE_MAP['en-US'].get('message', 'UNKNOWN_ERROR'),
             'data': kwargs
         })
 
@@ -80,26 +92,6 @@ class BaseAPIHandler(RequestHandler, BaseMixin):
         logger.info('status_code: %s, kwargs: %s' % (status_code, kwargs))
         self.set_status(status_code)
         self.output(kwargs)
-
-    # def log_exception(self, typ, value, tb):
-    #     super(BaseAPIHandler, self).log_exception(typ, value, tb)
-    #     if isinstance(value, HTTPError):
-    #         if value.log_message:
-    #             format = "%d %s: " + value.log_message
-    #             args = ([value.status_code, self._request_summary()] +
-    #                     list(value.args))
-    #             logger.error(format, *args)
-    #     else:
-    #         logger.exception(
-    #             "Uncaught exception %s\n%r",
-    #             self._request_summary(),
-    #             self.request,
-    #             exc_info=(typ, value, tb))
-
-    # def parse_error_info(self, err):
-    #     if err.args and len(err.args) >= 1:
-    #         return '%s: %s' % (err.message, err.args[0])
-    #     return err.message
 
     def get_current_user(self):
         userid = self.request.headers.get('userid')

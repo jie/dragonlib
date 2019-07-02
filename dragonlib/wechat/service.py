@@ -62,8 +62,8 @@ class WechatService(object):
 
         if result.get("errcode") != 0 and result.get("errcode") is not None:
             if result["errcode"] == 40029:
-                raise WeixinCodeExpired(response.body)
-            raise WeixinException("error when get_access_token: %s" % response.body)
+                raise WechatCodeExpired(response.body)
+            raise WechatException("error when get_access_token: %s" % response.body)
         return result
 
     def get_userinfo(self, access_token, openid):
@@ -73,7 +73,7 @@ class WechatService(object):
         result = self.parse_json(response.body)
 
         if result.get("errcode") != 0 and result.get("errcode") is not None:
-            raise WeixinException("erro when get_userinfo: %s" % response.body)
+            raise WechatException("erro when get_userinfo: %s" % response.body)
         return result
 
     def get_access_token_by_client_credential(self):
@@ -88,7 +88,7 @@ class WechatService(object):
         result = self.parse_json(response.body)
 
         if result.get("errcode") != 0 and result.get("errcode") is not None:
-            raise WeixinException(
+            raise WechatException(
                 "error when get_access_token_by_client_credential: %s" % response.body
             )
         return result
@@ -99,7 +99,7 @@ class WechatService(object):
         result = self.parse_json(response.body)
 
         if result.get("errcode") != 0 and result.get("errcode") is not None:
-            raise WeixinException("error when get_jsapi_ticket: %s" % response.body)
+            raise WechatException("error when get_jsapi_ticket: %s" % response.body)
         return result
 
     @staticmethod
