@@ -112,7 +112,7 @@ class APIHandler(BaseAPIHandler):
 
     def parse_params(self):
         return addict.Dict(tornado.escape.json_decode(
-            self.request.body)) if self.request.body else {}
+            self.request.body)) if self.request.body else addict.Dict({})
 
     def validate_params(self, params):
         '''
