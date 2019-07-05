@@ -7,15 +7,9 @@ from tornado.testing import AsyncHTTPTestCase
 class TestBase(AsyncHTTPTestCase):
     def setUp(self):
         super(TestBase, self).setUp()
-        # self.drop_table()
 
     def tearDown(self):
-        # self.drop_table()
         super(TestBase, self).tearDown()
-
-    def drop_table(self, table_name):
-        sql = "truncate table `%s`" % table_name
-        self._db._exec_sql(sql)
 
     def get_app(self):
         raise Exception('__must_return_application_object')
