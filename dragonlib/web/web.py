@@ -19,7 +19,8 @@ def authenticated(method):
     def wrapper(self, *args, **kwargs):
         if not self.current_user:
             self.fail(code=ErrorCode.unauthorized, message='session_required')
-        return method(self, *args, **kwargs)
+        else:
+            return method(self, *args, **kwargs)
     return wrapper
 
 
@@ -80,13 +81,16 @@ class BaseAPIHandler(RequestHandler, BaseMixin):
         if getattr(self, 'ERR_PREFIX', None):
             errcode = self.ERR_PREFIX + errcode
 
-        self.output({
+        response = {
             'code': errcode,
             'message': message,
-            'cnmsg': self.LANGUAGE_MAP['zh-CN'].get('message', '未知错误'),
-            'enmsg': self.LANGUAGE_MAP['en-US'].get('message', 'UNKNOWN_ERROR'),
             'data': kwargs
-        })
+        }
+        if self.LANGUAGE_MAP.get('en-US'):
+            response['enmsg'] = self.LANGUAGE_MAP['en-US'].get(message, 'UNKNOWN_ERROR')
+        if self.LANGUAGE_MAP.get('zh-CN'):
+            response['cnmsg'] = self.LANGUAGE_MAP['zh-CN'].get(message, '未知错误')
+        self.output(response)
 
     def info(self, status_code=200, **kwargs):
         logger.info('status_code: %s, kwargs: %s' % (status_code, kwargs))

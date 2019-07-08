@@ -4,6 +4,7 @@ Document class which provides some convenient methods
 from math import ceil
 from datetime import datetime
 from mongoengine.document import Document
+from mongoengine import StringField, BooleanField, DateTimeField, DateTimeField
 
 
 class FiltersRequiredErr(Exception):
@@ -20,6 +21,20 @@ class BaseDocument(Document):
         'abstract': True,
         'strict': False,
     }
+
+
+    is_del= BooleanField(required=False, default=False)
+    STATUS_NORMAL = '0'
+    STATUS_FROZEN = '1'
+    STATUS_INACTIVE = '2'
+    status = StringField(
+        required=True, 
+        default=STATUS_NORMAL,
+        choices=(STATUS_NORMAL, STATUS_FROZEN, STATUS_INACTIVE)
+    )
+    create_at = DateTimeField(required=True, default=datetime.utcnow)
+    update_at = DateTimeField(required=True, default=datetime.utcnow)
+
 
     @classmethod
     def create(cls, **kwargs):
@@ -105,7 +120,7 @@ class BaseDocument(Document):
         data = super().to_mongo().to_dict()
         data.pop('_id')
         data.pop('_cls')
-        data.update(id=self.get_by_id())
+        data.update(id=self.get_object_id())
 
         if not keys:
             return data
@@ -118,3 +133,5 @@ class BaseDocument(Document):
     
     def get_object_id(self):
         return str(self.id)
+
+
