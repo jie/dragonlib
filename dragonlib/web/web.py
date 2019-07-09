@@ -32,6 +32,7 @@ class ApiJsonEncoder(JSONEncoder):
                 return obj.strftime('%Y-%m-%d %H:%M:%S')
             elif isinstance(obj, date):
                 return obj.strftime('%Y-%m-%d')
+
             iterable = iter(obj)
         except TypeError as e:
             logger.warn(e)

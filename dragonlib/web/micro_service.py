@@ -23,8 +23,8 @@ class MicroService(object):
 
     def init_services(self):
         self.init_logger()
-        self.init_database()
         self.application = self.make_app()
+        self.init_database()
         self.init_redis()
 
     def init_database(self):

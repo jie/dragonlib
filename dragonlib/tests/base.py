@@ -11,4 +11,4 @@ class BaseTest(unittest.TestCase):
     def test_ifequal(self):
         self.assertEqual(1, 1)
 
-1
+

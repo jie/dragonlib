@@ -38,7 +38,6 @@ class TestBase(AsyncHTTPTestCase):
             return body
 
         if code is not None:
-            print('message: %s' % body.get('message'))
             self.assertEqual(body.get('code'), code)
 
         if message is not None:
