@@ -68,10 +68,16 @@ class MicroService(object):
         if getattr(self, 'application', None):
             return self.application
 
-        settings = {
-            'autoreload': self.autoreload,
-            'debug': self.debug
-        }
+        if self.getSetting('DEPLOY') == 'production':
+            settings = {
+                'autoreload': False,
+                'debug': False
+            }
+        else:
+            settings = {
+                'autoreload': True,
+                'debug': True
+            }
         if self.cookie_secret:
             settings['cookie_secret'] = self.cookie_secret
 
@@ -79,12 +85,6 @@ class MicroService(object):
         return self.application
 
     def start(self):
-        if self.getSetting('DEPLOY') == 'production':
-            http_server = tornado.httpserver.HTTPServer(self.application)
-            http_server.bind(self.port, '0.0.0.0')
-            http_server.start(num_processes=int(getattr(self.settings, '%s_PROCESS_NUM' % self.prefix, 0)))
-            tornado.ioloop.IOLoop.instance().start()
-        else:
-            self.application.listen(self.port, xheaders=True)
-            print('@starting development: %s' % self.port)
-            tornado.ioloop.IOLoop.instance().start()
+        self.application.listen(self.getSetting('PORT'), xheaders=True)
+        print('@starting development: %s' % self.port)
+        tornado.ioloop.IOLoop.instance().start()
