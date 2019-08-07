@@ -78,13 +78,13 @@ class MicroService(object):
         self.application = CoreApplication(self.routes, **settings)
         return self.application
 
-    # def get_wsgi_app(self):
-    #     from gevent import monkey
-    #     monkey.patch_all()
-    #     wsgi_app = WSGIAdapter(self.application)
-    #     return wsgi_app
-
     def start(self):
-        self.application.listen(self.port, xheaders=True)
-        print('@starting development: %s' % self.port)
-        tornado.ioloop.IOLoop.instance().start()
+        if self.getSetting('DEPLOY') == 'production':
+            http_server = tornado.httpserver.HTTPServer(self.application)
+            http_server.bind(self.port, '0.0.0.0')
+            http_server.start(num_processes=int(getattr(self.settings, '%s_PROCESS_NUM' % self.prefix, 0)))
+            tornado.ioloop.IOLoop.instance().start()
+        else:
+            self.application.listen(self.port, xheaders=True)
+            print('@starting development: %s' % self.port)
+            tornado.ioloop.IOLoop.instance().start()
