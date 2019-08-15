@@ -85,6 +85,9 @@ class MicroService(object):
         return self.application
 
     def start(self):
-        self.application.listen(self.getSetting('PORT'), xheaders=True)
+        if self.getSetting('DEPLOY') == 'production':
+            self.application.listen(self.getSetting('PORT'), xheaders=True)
+        else:
+            self.application.listen(self.port, xheaders=True)
         print('@starting development: %s' % self.port)
         tornado.ioloop.IOLoop.instance().start()
