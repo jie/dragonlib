@@ -14,5 +14,5 @@ class MongoConnection(object):
             alias = conn_config['alias']
             host = conn_config['host']
             logger.info('Connect to mongodb %s, %s' % (dbname, alias))
-            dbs[alias] = connect(alias=alias, host=host)
+            dbs[alias] = connect(alias=alias, host=host, db=alias)
         return dbs
