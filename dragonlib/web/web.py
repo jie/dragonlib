@@ -18,20 +18,20 @@ def authenticated(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
         if not self.current_user:
-            self.fail(code=ErrorCode.unauthorized, message='session_required')
+            self.fail(code=ErrorCode.unauthorized, message="session_required")
         else:
             return method(self, *args, **kwargs)
+
     return wrapper
 
 
 class ApiJsonEncoder(JSONEncoder):
-
     def default(self, obj):
         try:
             if isinstance(obj, datetime):
-                return obj.strftime('%Y-%m-%d %H:%M:%S')
+                return obj.strftime("%Y-%m-%d %H:%M:%S")
             elif isinstance(obj, date):
-                return obj.strftime('%Y-%m-%d')
+                return obj.strftime("%Y-%m-%d")
 
             iterable = iter(obj)
         except TypeError as e:
@@ -42,29 +42,33 @@ class ApiJsonEncoder(JSONEncoder):
 
 
 class APIError(Exception):
-    code = '-10000'
+    code = "-10000"
 
 
 class BaseMixin(object):
-
     def dumpjson(self, response):
         return json.dumps(response, cls=ApiJsonEncoder)
 
+    def _get_msg_by_language(language, message):
+        return (
+            self.LANGUAGE_MAP[language][message]
+            if self.LANGUAGE_MAP.get(language)
+            and self.LANGUAGE_MAP[language].get("message")
+            else message
+        )
+
     def output(self, response, **kwargs):
         self._chunk = self.dumpjson(response)
-        if not kwargs.get('content_type'):
-            self.set_header('Content-Type', 'application/json; charset=UTF-8')
+        if not kwargs.get("content_type"):
+            self.set_header("Content-Type", "application/json; charset=UTF-8")
         self.write(self._chunk)
         self.finish()
 
-    def success(self, message='ok', **kwargs):
-        self.output({
-            'code': ErrorCode.success,
-            'message': message,
-            'cnmsg': self.LANGUAGE_MAP['zh-CN'].get('message', '未知'),
-            'enmsg': self.LANGUAGE_MAP['en-US'].get('message', 'UNKNOWN'),
-            'data': kwargs
-        })
+    def success(self, message="ok", **kwargs):
+        response = {"code": ErrorCode.success, "message": message, "data": kwargs}
+        response["enmsg"] = self._get_msg_by_language('en-US', message)
+        response["cnmsg"] = self._get_msg_by_language('en-US', message)
+        self.output(response)
 
 
 class BaseAPIHandler(RequestHandler, BaseMixin):
@@ -73,33 +77,29 @@ class BaseAPIHandler(RequestHandler, BaseMixin):
     LANGUAGE_MAP = {}
 
     def fail(self, code, message, status_code=200, **kwargs):
-        logger.info('status_code: %s, message: %s, kwargs: %s' % (status_code, message, kwargs))
+        logger.info(
+            "status_code: %s, message: %s, kwargs: %s" % (status_code, message, kwargs)
+        )
         if status_code != 200:
             self.set_status(status_code)
-            self.set_header('system_error_format', 'json')
-        
+            self.set_header("system_error_format", "json")
+
         errcode = code
-        if getattr(self, 'ERR_PREFIX', None):
+        if getattr(self, "ERR_PREFIX", None):
             errcode = self.ERR_PREFIX + errcode
 
-        response = {
-            'code': errcode,
-            'message': message,
-            'data': kwargs
-        }
-        if self.LANGUAGE_MAP.get('en-US'):
-            response['enmsg'] = self.LANGUAGE_MAP['en-US'].get(message, 'UNKNOWN_ERROR')
-        if self.LANGUAGE_MAP.get('zh-CN'):
-            response['cnmsg'] = self.LANGUAGE_MAP['zh-CN'].get(message, '未知错误')
+        response = {"code": errcode, "message": message, "data": kwargs}
+        response["enmsg"] = self._get_msg_by_language('en-US', message)
+        response["cnmsg"] = self._get_msg_by_language('en-US', message)
         self.output(response)
 
     def info(self, status_code=200, **kwargs):
-        logger.info('status_code: %s, kwargs: %s' % (status_code, kwargs))
+        logger.info("status_code: %s, kwargs: %s" % (status_code, kwargs))
         self.set_status(status_code)
         self.output(kwargs)
 
     def get_current_user(self):
-        userid = self.request.headers.get('userid')
+        userid = self.request.headers.get("userid")
         if not userid:
             return
 
@@ -111,20 +111,22 @@ class BaseAPIHandler(RequestHandler, BaseMixin):
 
 
 class APIHandler(BaseAPIHandler):
-
     def api(self, params):
         return {}
 
     def parse_params(self):
-        return addict.Dict(tornado.escape.json_decode(
-            self.request.body)) if self.request.body else addict.Dict({})
+        return (
+            addict.Dict(tornado.escape.json_decode(self.request.body))
+            if self.request.body
+            else addict.Dict({})
+        )
 
     def validate_params(self, params):
-        '''
+        """
         params validate success return True value jump to finish
         else return None
-        '''
-        return True, ''
+        """
+        return True, ""
 
     def post(self):
         params = self.parse_params()
@@ -138,7 +140,6 @@ class APIHandler(BaseAPIHandler):
 
 
 class SessionAPI(APIHandler):
-
     @authenticated
     def post(self, *args, **kwargs):
         if self._finished:
