@@ -49,7 +49,7 @@ class BaseMixin(object):
     def dumpjson(self, response):
         return json.dumps(response, cls=ApiJsonEncoder)
 
-    def _get_msg_by_language(language, message):
+    def _get_msg_by_language(self, language, message):
         return (
             self.LANGUAGE_MAP[language][message]
             if self.LANGUAGE_MAP.get(language)
@@ -67,7 +67,7 @@ class BaseMixin(object):
     def success(self, message="ok", **kwargs):
         response = {"code": ErrorCode.success, "message": message, "data": kwargs}
         response["enmsg"] = self._get_msg_by_language('en-US', message)
-        response["cnmsg"] = self._get_msg_by_language('en-US', message)
+        response["cnmsg"] = self._get_msg_by_language('zh-CN', message)
         self.output(response)
 
 
@@ -90,7 +90,7 @@ class BaseAPIHandler(RequestHandler, BaseMixin):
 
         response = {"code": errcode, "message": message, "data": kwargs}
         response["enmsg"] = self._get_msg_by_language('en-US', message)
-        response["cnmsg"] = self._get_msg_by_language('en-US', message)
+        response["cnmsg"] = self._get_msg_by_language('zh-CN', message)
         self.output(response)
 
     def info(self, status_code=200, **kwargs):
