@@ -57,7 +57,7 @@ class MicroService(object):
             level=logging.DEBUG,
             format="[%(asctime)s] %(name)s:%(levelname)s: %(message)s"
         )
-        logger = logging.getLogger('umbrella_api')
+        logger = logging.getLogger(__name__)
         logger.setLevel(logging.DEBUG)
         self.logger = logger
 

@@ -74,7 +74,6 @@ class BaseMixin(object):
 class BaseAPIHandler(RequestHandler, BaseMixin):
 
     ERR_PREFIX = None
-    LANGUAGE_MAP = {}
 
     def fail(self, code, message, status_code=200, **kwargs):
         logger.info(
