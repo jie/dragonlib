@@ -53,7 +53,7 @@ class BaseMixin(object):
         return (
             self.LANGUAGE_MAP[language][message]
             if self.LANGUAGE_MAP.get(language)
-            and self.LANGUAGE_MAP[language].get("message")
+            and self.LANGUAGE_MAP[language].get(message)
             else message
         )
 
