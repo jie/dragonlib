@@ -84,7 +84,13 @@ class BaseDocument(Document):
         return count, total_page, records
         """
         skip = (page - 1) * pagesize
+        order_by = None
+        if kwargs.get('order_by'):
+            order_by = kwargs.pop('order_by')
         query = cls.objects(*args, **kwargs)
+
+        if order_by:
+            query.order_by(order_by)
 
         # TODO check if count is need
         count = query.count()
