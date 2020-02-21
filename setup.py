@@ -42,7 +42,7 @@ setup(
         "maxminddb==1.4.1",
         "nose2==0.9.1",
         "ntlm-auth==1.3.0",
-        "Pillow==6.0.0",
+        "Pillow==6.2.0",
         "pycparser==2.19",
         "pycrypto==2.6.1",
         "Pygments==2.4.2",
