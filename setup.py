@@ -15,8 +15,6 @@ setup(
         "celery==4.4.6",
         "coverage==5.2",
         "Jinja2==2.11.2",
-        "kombu==4.6.11",
-        "MarkupSafe==1.1.1",
         "nose2==0.9.2",
         "redis==3.5.3",
         "requests==2.24.0",
