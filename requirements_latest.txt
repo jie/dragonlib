@@ -1,0 +1,10 @@
+Jinja2
+addict
+celery
+coverage
+tornado
+xlwt
+nose2
+redis
+requests
+shortuuid

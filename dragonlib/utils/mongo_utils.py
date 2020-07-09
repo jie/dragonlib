@@ -1,6 +1,4 @@
 import logging
-from mongoengine import connect
-
 logger = logging.getLogger(__name__)
 
 class MongoConnection(object):
@@ -9,6 +7,7 @@ class MongoConnection(object):
         self.config = config
 
     def initdb(self):
+        from mongoengine import connect
         dbs = {}
         for dbname, conn_config in self.config.items():
             alias = conn_config['alias']
