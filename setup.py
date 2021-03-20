@@ -14,7 +14,7 @@ setup(
         "addict==2.2.1",
         "celery==4.4.6",
         "coverage==5.2",
-        "Jinja2==2.11.2",
+        "Jinja2==2.11.3",
         "nose2==0.9.2",
         "redis==3.5.3",
         "requests==2.24.0",
