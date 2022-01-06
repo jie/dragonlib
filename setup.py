@@ -12,7 +12,7 @@ setup(
 
     install_requires = [
         "addict==2.2.1",
-        "celery==4.4.6",
+        "celery==5.2.2",
         "coverage==5.2",
         "Jinja2==2.11.2",
         "nose2==0.9.2",
